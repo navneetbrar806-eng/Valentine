@@ -5,203 +5,165 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>❤️ Valentine?</title>
   <style>
-    :root {
-      --bg1: #ffeff5;
-      --bg2: #ffe4ec;
-      --ink: #2b2b2b;
-      --pink: #ff4d86;
-      --pink2: #ff7aa8;
-      --card: rgba(255, 255, 255, 0.75);
+    :root{
+      --bg1:#ffeff5; --bg2:#ffe4ec; --ink:#2b2b2b;
+      --pink:#ff4d86; --pink2:#ff7aa8;
+      --card:rgba(255,255,255,.78);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh; overflow:hidden;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 20% 20%, var(--bg1), transparent),
+        radial-gradient(1200px 600px at 80% 80%, var(--bg2), transparent),
+        linear-gradient(135deg,#fff,#ffe9f1);
     }
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      color: var(--ink);
-      overflow: hidden;
-      background: radial-gradient(1200px 600px at 20% 20%, var(--bg1), transparent),
-                  radial-gradient(1200px 600px at 80% 80%, var(--bg2), transparent),
-                  linear-gradient(135deg, #fff, #ffe9f1);
+    /* Floating hearts */
+    .hearts{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+    .heart{
+      position:absolute; width:18px; height:18px; transform:rotate(45deg);
+      opacity:.7; animation:floatUp linear infinite;
+      filter:drop-shadow(0 6px 8px rgba(0,0,0,.08));
+      background:linear-gradient(180deg,var(--pink2),var(--pink));
+    }
+    .heart::before,.heart::after{
+      content:""; position:absolute; width:18px; height:18px; border-radius:50%;
+      background:linear-gradient(180deg,var(--pink2),var(--pink));
+    }
+    .heart::before{left:-9px; top:0}
+    .heart::after{left:0; top:-9px}
+    @keyframes floatUp{
+      from{transform:translateY(30px) rotate(45deg)}
+      to{transform:translateY(-120vh) rotate(45deg)}
     }
 
-    /* floating hearts background */
-    .hearts {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
+    .wrap{height:100vh; display:grid; place-items:center; padding:24px}
+    .card{
+      width:min(720px,92vw);
+      background:var(--card);
+      backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:24px;
+      padding:clamp(18px,4vw,34px);
+      box-shadow:0 18px 60px rgba(0,0,0,.12);
+      text-align:center;
+      position:relative;
     }
-    .heart {
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      transform: rotate(45deg);
-      opacity: 0.7;
-      animation: floatUp linear infinite;
-      filter: drop-shadow(0 6px 8px rgba(0,0,0,0.08));
+    .title{
+      font-size:clamp(26px,4.2vw,44px);
+      margin:0 0 10px;
+      letter-spacing:-0.02em;
     }
-    .heart::before, .heart::after {
-      content: "";
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: linear-gradient(180deg, var(--pink2), var(--pink));
-    }
-    .heart::before { left: -9px; top: 0; }
-    .heart::after  { left: 0; top: -9px; }
-    .heart { background: linear-gradient(180deg, var(--pink2), var(--pink)); }
-
-    @keyframes floatUp {
-      from { transform: translateY(30px) rotate(45deg); }
-      to   { transform: translateY(-120vh) rotate(45deg); }
+    .subtitle{
+      margin:0 0 18px;
+      font-size:clamp(16px,2.2vw,20px);
+      opacity:.9;
     }
 
-    .wrap {
-      position: relative;
-      height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+    /* YES row (always stable, never overlaps) */
+    .yesRow{
+      display:flex; justify-content:center; gap:12px; flex-wrap:wrap;
+      margin: 6px 0 14px;
     }
 
-    .card {
-      width: min(720px, 92vw);
-      background: var(--card);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 24px;
-      padding: clamp(20px, 4vw, 36px);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.12);
-      text-align: center;
-      position: relative;
-      overflow: hidden;
+    button{
+      border:0; padding:14px 22px; border-radius:999px;
+      font-size:18px; cursor:pointer;
+      transition:transform .12s ease, box-shadow .12s ease, filter .12s ease;
+      user-select:none; -webkit-tap-highlight-color:transparent;
+    }
+    button:active{transform:scale(.98)}
+    #yesBtn{
+      background:linear-gradient(180deg,#ff7aa8,#ff3f7f);
+      color:#fff;
+      box-shadow:0 12px 28px rgba(255,63,127,.25);
+    }
+    #yesBtn:hover{filter:brightness(1.02); transform:translateY(-1px)}
+
+    /* Dedicated play area for NO (prevents overlap) */
+    .noZone{
+      position:relative;
+      width:100%;
+      height: clamp(140px, 22vh, 220px);
+      border-radius:18px;
+      border:1px dashed rgba(0,0,0,.10);
+      background:rgba(255,255,255,.35);
+      overflow:hidden;
+      padding:12px;
+      margin-top: 8px;
+    }
+    .noHint{
+      font-size:13px; opacity:.65; margin:0 0 10px;
     }
 
-    .title {
-      font-size: clamp(28px, 4.2vw, 44px);
-      margin: 0 0 10px;
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      margin: 0 0 26px;
-      font-size: clamp(16px, 2.2vw, 20px);
-      opacity: 0.9;
-    }
-
-    .btnRow {
-      display: flex;
-      gap: 14px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 10px;
-    }
-
-    button {
-      border: 0;
-      padding: 14px 22px;
-      border-radius: 999px;
-      font-size: 18px;
-      cursor: pointer;
-      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
-      user-select: none;
-      -webkit-tap-highlight-color: transparent;
-    }
-    button:active { transform: scale(0.98); }
-
-    #yesBtn {
-      background: linear-gradient(180deg, #ff7aa8, #ff3f7f);
-      color: white;
-      box-shadow: 0 12px 28px rgba(255, 63, 127, 0.25);
-    }
-    #yesBtn:hover { filter: brightness(1.02); transform: translateY(-1px); }
-
-    /* No button is positioned absolutely so it can "run away" */
-    #noBtn {
-      background: rgba(255,255,255,0.9);
-      color: #222;
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 10px 22px rgba(0,0,0,0.10);
-      position: absolute;
+    #noBtn{
+      background:rgba(255,255,255,.92);
+      color:#222;
+      border:1px solid rgba(0,0,0,.08);
+      box-shadow:0 10px 22px rgba(0,0,0,.10);
+      position:absolute;
       left: 50%;
-      top: 72%;
+      top: 60%;
       transform: translate(-50%, -50%);
-    }
-    #noBtn:hover { transform: translate(-50%, -52%); }
-
-    /* speech bubble */
-    .bubble {
-      position: absolute;
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.95);
-      border: 1px solid rgba(0,0,0,0.08);
-      border-radius: 16px;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.10);
-      font-size: 14px;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      pointer-events: none;
-      max-width: 200px;
-      text-align: left;
-    }
-    .bubble.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .bubble::after {
-      content: "";
-      position: absolute;
-      left: 20px;
-      bottom: -8px;
-      width: 14px;
-      height: 14px;
-      background: rgba(255,255,255,0.95);
-      border-right: 1px solid rgba(0,0,0,0.08);
-      border-bottom: 1px solid rgba(0,0,0,0.08);
-      transform: rotate(45deg);
+      touch-action: manipulation;
     }
 
-    /* celebration overlay */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      background: rgba(255, 255, 255, 0.65);
-      backdrop-filter: blur(10px);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.25s ease;
+    /* Bubble inside the noZone */
+    .bubble{
+      position:absolute;
+      padding:10px 12px;
+      background:rgba(255,255,255,.95);
+      border:1px solid rgba(0,0,0,.08);
+      border-radius:16px;
+      box-shadow:0 10px 24px rgba(0,0,0,.10);
+      font-size:14px;
+      opacity:0;
+      transform:translateY(6px);
+      transition:opacity .18s ease, transform .18s ease;
+      pointer-events:none;
+      max-width: 220px;
+      text-align:left;
     }
-    .overlay.show { opacity: 1; pointer-events: auto; }
-    .overlayCard {
-      width: min(720px, 92vw);
-      border-radius: 24px;
-      padding: 28px;
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 18px 70px rgba(0,0,0,0.14);
-      text-align: center;
+    .bubble.show{opacity:1; transform:translateY(0)}
+    .bubble::after{
+      content:"";
+      position:absolute;
+      left:20px; bottom:-8px;
+      width:14px; height:14px;
+      background:rgba(255,255,255,.95);
+      border-right:1px solid rgba(0,0,0,.08);
+      border-bottom:1px solid rgba(0,0,0,.08);
+      transform:rotate(45deg);
     }
-    .big {
-      font-size: clamp(26px, 4.2vw, 42px);
-      margin: 0 0 10px;
+
+    /* Celebration overlay */
+    .overlay{
+      position:fixed; inset:0;
+      display:grid; place-items:center;
+      background:rgba(255,255,255,.65);
+      backdrop-filter:blur(10px);
+      opacity:0; pointer-events:none;
+      transition:opacity .25s ease;
     }
-    .small {
-      margin: 0 0 16px;
-      font-size: clamp(16px, 2.2vw, 20px);
-      opacity: 0.9;
+    .overlay.show{opacity:1; pointer-events:auto}
+    .overlayCard{
+      width:min(720px,92vw);
+      border-radius:24px;
+      padding:28px;
+      background:rgba(255,255,255,.88);
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow:0 18px 70px rgba(0,0,0,.14);
+      text-align:center;
     }
-    .hint {
-      font-size: 13px;
-      opacity: 0.7;
-      margin: 0;
-    }
+    .big{font-size:clamp(26px,4.2vw,42px); margin:0 0 10px}
+    .small{margin:0 0 16px; font-size:clamp(16px,2.2vw,20px); opacity:.9}
+    .hint{font-size:13px; opacity:.7; margin:0}
   </style>
 </head>
+
 <body>
   <div class="hearts" id="hearts"></div>
 
@@ -210,13 +172,15 @@
       <h1 class="title">I love you ❤️</h1>
       <p class="subtitle">Will you be my Valentine?</p>
 
-      <div class="btnRow">
+      <div class="yesRow">
         <button id="yesBtn">Yes 💖</button>
-        <!-- No is absolutely positioned; kept in the card -->
-        <button id="noBtn" aria-label="No">No 🙈</button>
       </div>
 
-      <div class="bubble" id="bubble">are you sure?</div>
+      <div class="noZone" id="noZone">
+        <p class="noHint">Tap “No” if you dare 😄</p>
+        <button id="noBtn" aria-label="No">No 🙈</button>
+        <div class="bubble" id="bubble">are you sure?</div>
+      </div>
     </div>
   </div>
 
@@ -224,7 +188,7 @@
     <div class="overlayCard">
       <h2 class="big">YAYYYYY!! 💞</h2>
       <p class="small">Best Valentine ever. I love you!</p>
-      <p class="hint">(Take a screenshot and send it to me 😄)</p>
+      <p class="hint">(Tap anywhere to close)</p>
     </div>
   </div>
 
@@ -232,8 +196,7 @@
     // ---------- Floating hearts ----------
     const heartsEl = document.getElementById("hearts");
     const HEART_COUNT = 18;
-
-    function rand(min, max) { return Math.random() * (max - min) + min; }
+    const rand = (min, max) => Math.random() * (max - min) + min;
 
     for (let i = 0; i < HEART_COUNT; i++) {
       const h = document.createElement("div");
@@ -251,8 +214,8 @@
       heartsEl.appendChild(h);
     }
 
-    // ---------- Interactive buttons ----------
-    const card = document.getElementById("card");
+    // ---------- Interactive NO button ----------
+    const noZone = document.getElementById("noZone");
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const bubble = document.getElementById("bubble");
@@ -265,40 +228,38 @@
       "try again 😅",
       "pleaseeee 💗",
       "okay but… I love you 😤❤️",
-      "last chance… 😈",
+      "last chance… 😈"
     ];
     let noCount = 0;
 
-    function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+    const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
 
     function placeNoButtonRandom() {
-      const cardRect = card.getBoundingClientRect();
+      const zoneRect = noZone.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
 
-      // bounds inside card (leave padding so it doesn't go off the edges)
-      const pad = 16;
+      const pad = 10;
       const minX = pad;
-      const maxX = cardRect.width - btnRect.width - pad;
-      const minY = cardRect.height * 0.52; // keep it in lower half
-      const maxY = cardRect.height - btnRect.height - pad;
+      const maxX = zoneRect.width - btnRect.width - pad;
+      const minY = 44; // keep below hint text
+      const maxY = zoneRect.height - btnRect.height - pad;
 
-      const x = rand(minX, maxX);
-      const y = rand(minY, maxY);
+      const x = rand(minX, Math.max(minX, maxX));
+      const y = rand(minY, Math.max(minY, maxY));
 
       noBtn.style.left = x + "px";
       noBtn.style.top = y + "px";
       noBtn.style.transform = "translate(0, 0)";
 
-      // bubble above the button
-      const bubbleX = clamp(x + btnRect.width / 2 - 60, pad, cardRect.width - 220);
-      const bubbleY = clamp(y - 52, pad, cardRect.height - 120);
+      // Bubble near the button
+      const bubbleX = clamp(x + btnRect.width / 2 - 60, pad, zoneRect.width - 230);
+      const bubbleY = clamp(y - 56, pad, zoneRect.height - 120);
       bubble.style.left = bubbleX + "px";
       bubble.style.top = bubbleY + "px";
 
-      // show bubble briefly
       bubble.classList.add("show");
-      window.clearTimeout(placeNoButtonRandom._t);
-      placeNoButtonRandom._t = window.setTimeout(() => bubble.classList.remove("show"), 900);
+      clearTimeout(placeNoButtonRandom._t);
+      placeNoButtonRandom._t = setTimeout(() => bubble.classList.remove("show"), 900);
     }
 
     function noEscape() {
@@ -306,39 +267,30 @@
       bubble.textContent = messages[noCount % messages.length];
       placeNoButtonRandom();
 
-      // Make YES slightly more tempting over time
+      // Make YES more tempting but keep it in place
       const scale = 1 + Math.min(noCount, 10) * 0.04;
       yesBtn.style.transform = `scale(${scale})`;
       yesBtn.style.boxShadow = `0 16px 40px rgba(255, 63, 127, ${0.18 + Math.min(noCount, 10) * 0.02})`;
     }
 
-    // On desktop: hovering the No button makes it run away
+    // Desktop: hover makes it run
     noBtn.addEventListener("mouseenter", noEscape);
 
-    // On mobile: tapping No makes it run away
+    // Mobile: tap makes it run
     noBtn.addEventListener("click", (e) => {
       e.preventDefault();
       noEscape();
     });
 
-    // Also allow clicking the card background to re-position if needed
-    window.addEventListener("resize", () => {
-      // Keep button within bounds after resizing
-      placeNoButtonRandom();
-    });
-
     yesBtn.addEventListener("click", () => {
       overlay.classList.add("show");
-      // optional: freeze No button behavior
       noBtn.style.pointerEvents = "none";
     });
 
     overlay.addEventListener("click", () => overlay.classList.remove("show"));
 
-    // initial placement
-    // Convert absolute positioning to card-relative positioning
-    // by setting card position: relative (already) and noBtn absolute.
-    // We place after first render tick:
+    window.addEventListener("resize", () => placeNoButtonRandom());
+
     requestAnimationFrame(placeNoButtonRandom);
   </script>
 </body>
